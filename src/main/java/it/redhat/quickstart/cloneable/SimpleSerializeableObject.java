@@ -1,14 +1,15 @@
 package it.redhat.quickstart.cloneable;
 
+import it.redhat.quickstart.common.AbstractBaseObject;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import java.io.Serializable;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
-public class SimpleSerializeableObject implements Serializable {
+public class SimpleSerializeableObject extends AbstractBaseObject {
 
     private static final long serialVersionUID = 13123L;
 
@@ -37,5 +38,9 @@ public class SimpleSerializeableObject implements Serializable {
                 ", nestedSimple=" + nestedSimple +
                 ", nestedCloneable=" + nestedCloneable +
                 '}';
+    }
+
+    public String getData() {
+        return data;
     }
 }

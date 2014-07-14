@@ -1,7 +1,5 @@
 package it.redhat.quickstart.cloneable;
 
-import org.apache.commons.lang.SerializationUtils;
-
 import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.jws.soap.SOAPBinding;
@@ -14,7 +12,11 @@ public class SimpleWebCall {
     }
 
     @WebMethod
-    public SimpleSerializeableObject echoCopy(String message) {
-        return (SimpleSerializeableObject) SerializationUtils.clone(new SimpleSerializeableObject(message));
+    public SimpleSerializeableObject echo(String message) {
+        try {
+            return (SimpleSerializeableObject) (new SimpleSerializeableObject(message)).clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
