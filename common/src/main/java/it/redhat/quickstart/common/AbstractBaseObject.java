@@ -14,8 +14,7 @@ public abstract class AbstractBaseObject implements Cloneable, Serializable {
     @Override
     public Object clone() throws CloneNotSupportedException {
         if(AbstractBaseObject.useJBoss()) {
-            JBossMarshaller marshaller = new JBossMarshaller();
-            return marshaller.unmarshall(this.getClass(), marshaller.marshall(this));
+            return JBossMarshaller.unmarshall(this.getClass(), JBossMarshaller.marshall(this));
         } else {
             return deserialize(this.serialize());
         }

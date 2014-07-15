@@ -14,31 +14,31 @@ public class JBossMarshaller {
 
     private static final Logger LOG = LoggerFactory.getLogger(AbstractBaseObject.class);
 
-    public byte[] marshall(Object object) {
-        ByteArrayOutputStream myArray = new ByteArrayOutputStream();
+    public static byte[] marshall(Object object) {
+        if (object == null) {
+            throw new IllegalArgumentException("Cannot marshall a null object");
+        }
+
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
 
         RiverMarshallerFactory factory = new RiverMarshallerFactory();
         MarshallingConfiguration configuration = new MarshallingConfiguration();
+
+        configuration.setClassResolver(ModularClassResolver.getInstance(ModuleLoader.forClass(object.getClass())));
+
         Marshaller marshaller = null;
-
-        // Enable Modular Serialization!
-        configuration.setClassResolver(ModularClassResolver.getInstance(ModuleLoader.forClassLoader(object.getClass().getClassLoader())));
-
         try {
-            // Create a marshaller on some stream we have
             marshaller = factory.createMarshaller(configuration);
-            marshaller.start(new OutputStreamByteOutput(myArray));
+            marshaller.start(new OutputStreamByteOutput(bytes));
 
-            // Write lots of stuff
             marshaller.writeObject(object);
             marshaller.flush();
 
-            return myArray.toByteArray();
+            return bytes.toByteArray();
         } catch (IOException e) {
             LOG.error(e.getMessage(), e);
             throw new RuntimeException(e);
         } finally {
-            // Done
             if (marshaller != null) {
                 try {
                     marshaller.finish();
@@ -49,18 +49,14 @@ public class JBossMarshaller {
         }
     }
 
-    public Object unmarshall(Class clazz, byte[] bytes) {
-        ByteArrayOutputStream myArray = new ByteArrayOutputStream();
-
+    public static Object unmarshall(Class clazz, byte[] bytes) {
         RiverMarshallerFactory factory = new RiverMarshallerFactory();
         MarshallingConfiguration configuration = new MarshallingConfiguration();
+
+        configuration.setClassResolver(ModularClassResolver.getInstance(ModuleLoader.forClass(clazz)));
+
         Unmarshaller unmarshaller = null;
-
-        // Enable Modular Serialization!
-        configuration.setClassResolver(ModularClassResolver.getInstance(ModuleLoader.forClassLoader(clazz.getClassLoader())));
-
         try {
-            // Create a unmarshaller on some stream we have
             unmarshaller = factory.createUnmarshaller(configuration);
             unmarshaller.start(new InputStreamByteInput(new ByteArrayInputStream(bytes)));
 
@@ -72,7 +68,6 @@ public class JBossMarshaller {
             LOG.error(e.getMessage(), e);
             throw new RuntimeException(e);
         } finally {
-            // Done
             if (unmarshaller != null) {
                 try {
                     unmarshaller.finish();
