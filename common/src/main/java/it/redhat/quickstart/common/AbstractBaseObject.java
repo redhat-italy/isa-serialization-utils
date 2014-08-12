@@ -7,7 +7,7 @@ import java.io.*;
 
 public abstract class AbstractBaseObject implements Cloneable, Serializable {
 
-    private static final String CLASS_NAME = "org.jboss.marshalling.river.RiverMarshallerFactory";
+    private static final String CLASS_NAME = "org.jboss.modules.ModuleClassLoader";
     private static final Logger LOG = LoggerFactory.getLogger(AbstractBaseObject.class);
     private static final long serialVersionUID = 1L;
 
